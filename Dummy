@@ -1,0 +1,130 @@
+import React, { useEffect, useState } from "react";
+import { BookOpen } from "lucide-react";
+
+const EbookSection = () => {
+  const [books, setBooks] = useState([]);
+
+  useEffect(() => {
+    fetch("http://localhost:8080/api/ebooks")
+      .then((response) => response.json())
+      .then((data) => setBooks(data))
+      .catch((error) => console.error("Error fetching ebooks:", error));
+  }, []);
+
+  return (
+    <div style={styles.container}>
+      <h2 style={styles.heading}>📚 Explore E-Books</h2>
+      <div style={styles.gridContainer}>
+        {books.map((book, index) => (
+          <div key={index} style={styles.card} className="fade-in">
+            <div style={styles.content}>
+              <h3 style={styles.title}>{book}</h3>
+              <button
+                style={styles.readButton}
+                className="read-btn"
+                onClick={() =>
+                  window.open(`http://localhost:8080/api/ebooks/${book}`, "_blank")
+                }
+              >
+                <BookOpen size={18} style={{ marginRight: "8px" }} /> Read Book
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+const styles = {
+  container: {
+    padding: "50px 10%",
+    backgroundColor: "white",
+    minHeight: "100vh",
+    textAlign: "center",
+  },
+  heading: {
+    fontSize: "2.5rem",
+    color: "#9100df",
+    marginBottom: "30px",
+    fontWeight: "bold",
+  },
+  gridContainer: {
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fill, minmax(250px, 1fr))",
+    gap: "20px",
+    justifyContent: "center",
+  },
+  card: {
+    background: "linear-gradient(135deg, #9100df, #4A90E2)",
+    padding: "20px",
+    borderRadius: "15px",
+    textAlign: "center",
+    boxShadow: "0 10px 20px rgba(0, 0, 0, 0.2)",
+    transition: "transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    flexDirection: "column",
+    minHeight: "180px",
+  },
+  content: {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  title: {
+    fontSize: "1.2rem",
+    fontWeight: "bold",
+    color: "#fff",
+    marginBottom: "10px",
+  },
+  readButton: {
+    background: "#fff",
+    color: "#9100df",
+    padding: "10px 15px",
+    border: "none",
+    borderRadius: "8px",
+    fontSize: "1rem",
+    fontWeight: "bold",
+    cursor: "pointer",
+    display: "flex",
+    alignItems: "center",
+    transition: "all 0.3s ease-in-out",
+  },
+};
+
+// CSS Animations
+const css = `
+  .fade-in {
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeInAnimation 0.6s ease-in-out forwards;
+  }
+
+  @keyframes fadeInAnimation {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .read-btn:hover {
+    background: #9100df;
+    color: white;
+    transform: scale(1.05);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  }
+`;
+
+// Injecting CSS into the document
+const styleElement = document.createElement("style");
+styleElement.innerHTML = css;
+document.head.appendChild(styleElement);
+
+export default EbookSection;
